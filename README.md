@@ -1,82 +1,83 @@
-# Graduation Paper Workflow
+# 毕业论文工作流
 
-`graduation-paper-workflow` is an open-source Codex skill for taking a coursework or graduation paper from early planning to final Word delivery.
+`graduation-paper-workflow` 是一个面向 Codex 的开源 skill，用于把课程论文或毕业大作业从前期讨论一路推进到最终 Word 文档交付。
 
-It covers the full flow:
+它覆盖的完整流程包括：
 
-1. Collect writing constraints from the user
-2. Propose topic options
-3. Confirm the final topic
-4. Build and confirm the outline
-5. Expand the outline into a full Markdown draft
-6. Extract formatting rules from a Word template into JSON
-7. Generate a final `.docx` from the template and Markdown draft
-8. Validate the generated document
+1. 收集写作约束和基础信息
+2. 生成论文题目候选列表
+3. 确认最终题目
+4. 生成并确认论文框架
+5. 按框架扩写成完整 Markdown 初稿
+6. 从 Word 模板中提取格式规则并生成 JSON
+7. 使用模板 JSON 和 Markdown 初稿生成最终 `.docx`
+8. 校验生成结果
 
-## What This Repository Includes
+## 仓库内容
 
 - `SKILL.md`
-  The main skill instructions used by Codex.
+  Skill 主说明文件，供 Codex 直接使用。
 - `agents/openai.yaml`
-  UI-facing metadata for the skill.
+  Skill 的 UI 元数据。
 - `references/authoring-flow.md`
-  The front-half workflow for topic selection, outlining, and Markdown drafting.
+  前半段写作流程，包括选题、框架和 Markdown 初稿。
 - `references/workflow.md`
-  The end-to-end workflow and common failure modes.
+  从选题到 Word 生成的整体流程以及常见风险点。
 - `references/json-contract.md`
-  The contract for template-format JSON.
+  模板格式 JSON 的结构契约。
 - `references/markdown-contract.md`
-  The Markdown structure expected by the bundled generator.
+  生成器要求的 Markdown 输入结构。
 - `scripts/extract_word_template_format.py`
-  Extracts formatting information from `.doc/.docx` templates into JSON.
+  从 `.doc/.docx` 模板提取格式并生成 JSON。
 - `scripts/generate_markdown_papers_docx.py`
-  Generates `.docx` papers from Markdown plus a template JSON.
+  根据 Markdown 和模板 JSON 生成最终 Word 文档。
 
-## Typical Use Case
+## 适用场景
 
-This skill is designed for scenarios such as:
+这个 skill 适合以下类型任务：
 
 - 成人教育毕业大作业
-- 专科/本科课程论文
+- 专科或本科课程论文
 - 需要套学校 Word 模板的论文或报告
-- 先写 Markdown，再生成最终 Word 文档的场景
+- 先写 Markdown，再统一生成 Word 定稿的场景
 
-## Workflow Summary
+## 工作流程概览
 
-### 1. Intake
+### 1. 信息收集
 
-Collect the information needed to start:
+优先获取这些内容：
 
-- Major or course
-- Writing direction
-- Preferred topic style
-- Length or depth expectations
-- Must-have and must-avoid content
-- Word template, if already available
+- 专业或课程背景
+- 论文方向
+- 希望写的技术、设备、系统或应用场景
+- 写作风格偏好
+- 篇幅或深度要求
+- 必须包含或必须避开的内容
+- Word 模板文件（如果已经有）
 
-### 2. Topic Selection
+### 2. 题目讨论
 
-Generate a shortlist of paper topics and let the user choose one.
+先给出一组可选题目，让用户从中选择或微调，而不是一开始就锁死一个题目。
 
-### 3. Outline Confirmation
+### 3. 框架确认
 
-Build a clear outline that can be expanded into a complete paper draft.
+围绕确认后的题目生成一个可扩写的论文框架，并让用户确认章节结构。
 
-### 4. Markdown Draft
+### 4. Markdown 初稿
 
-Write a full draft in Markdown that matches the generator's parsing contract.
+根据确认后的框架扩写成完整 Markdown 初稿，并保持与生成器的解析约定兼容。
 
-### 5. Template Extraction
+### 5. 模板识别
 
-Run:
+运行：
 
 ```bash
 python scripts/extract_word_template_format.py <template.doc|docx> <output.json>
 ```
 
-### 6. Word Generation
+### 6. Word 生成
 
-Run:
+运行：
 
 ```bash
 python scripts/generate_markdown_papers_docx.py \
@@ -86,20 +87,20 @@ python scripts/generate_markdown_papers_docx.py \
   <paper.md>
 ```
 
-## Requirements
+## 运行要求
 
 - Windows
 - Microsoft Word
 - Python
 - `pywin32`
 
-## Design Notes
+## 设计要点
 
-- The skill treats extracted `outline_level` values as evidence, not as unconditional generation commands.
-- Only true semantic headings should appear in Word navigation.
-- TOC entries, keywords, normal body paragraphs, and reference items should remain body text in Word navigation.
-- Shape-based elements such as text-box titles may need dedicated handling instead of paragraph-only logic.
+- 模板里提取到的 `outline_level` 只当作“证据”，不能无条件照抄到生成结果中。
+- 只有真正的语义标题才应该进入 Word 导航。
+- 目录条目、关键词、正文段落、参考文献条目必须保持为正文级别。
+- 文本框标题等形状对象不能简单按普通段落处理。
 
-## License
+## 许可证
 
-This repository is released under the MIT License.
+本项目使用 MIT License。

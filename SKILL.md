@@ -1,108 +1,108 @@
 ---
 name: graduation-paper-workflow
-description: "Run the end-to-end paper workflow from topic discussion to final Word delivery: collect writing constraints, propose topic options, build an outline, expand the outline into markdown draft content, extract formatting requirements from a Word .doc/.docx template into reusable JSON, then combine that JSON with markdown paper text to generate a new Word document that matches the template as closely as possible. Use when Codex needs to help plan, draft, revise, or format a graduation paper or similar coursework paper."
+description: "运行从选题讨论到最终 Word 交付的完整论文流程：收集写作约束、生成题目候选、整理并确认框架、扩写成 Markdown 初稿、从 Word 模板提取格式 JSON，并基于模板与 Markdown 生成最终文档。适用于毕业大作业、课程论文及类似写作与排版任务。"
 ---
 
-# Graduation Paper Workflow
+# 毕业论文工作流
 
-## Overview
+## 概述
 
-Run a multi-stage workflow:
+按多阶段流程推进论文任务：
 
-1. Collect writing constraints and required inputs.
-2. Propose topic options and help the user choose a title.
-3. Build and confirm the paper outline.
-4. Expand the outline into a full markdown draft.
-5. Extract template structure and formatting into JSON.
-6. Combine markdown paper text with the template and JSON to generate a new Word document.
+1. 收集写作约束与必要输入
+2. 生成题目候选并协助用户选题
+3. 生成并确认论文框架
+4. 按框架扩写成完整 Markdown 初稿
+5. 从 Word 模板中提取结构与格式 JSON
+6. 用模板和 Markdown 生成最终 Word 文档
 
-Prefer the documented workflow and bundled scripts first, then patch heuristics and rerun until authoring, extraction, and generation all match the user's requirements and the template.
+优先使用现有流程和脚本。只有在现有结果不够稳定时，才去修规则或修脚本。
 
-## Start With Intake
+## 先做信息收集
 
-Before drafting, gather the missing inputs progressively. Do not ask everything at once if part of it is already known.
+在开始写作前，分阶段收集缺失信息。不要一次把所有问题都抛给用户，优先问当前推进到下一步所必须的信息。
 
-Prioritize these items:
+优先确认这些内容：
 
 - 专业或所属课程
-- 论文方向或想写的技术/设备/场景
-- 学校模板文件或最终 Word 格式要求
-- 希望的题目风格：偏理论、偏应用、偏案例、偏故障分析、偏发展趋势
-- 篇幅或深度要求
-- 是否有必须包含或必须避开的内容
-- 是否已有参考题目、提纲、初稿或参考资料
+- 论文方向，或想写的技术、设备、系统、行业场景
+- 学校模板文件，或最终 Word 格式要求
+- 题目倾向：理论分析、应用分析、案例分析、故障分析、发展趋势
+- 篇幅、深度或难度要求
+- 必须包含或必须避开的内容
+- 是否已有参考题目、提纲、初稿或资料
 
-If the template is not available yet, still proceed through topic selection, outlining, and markdown drafting, but treat final Word generation as blocked until the template arrives.
+如果模板暂时还没有，也可以先完成选题、框架和 Markdown 初稿，只把最终 Word 阶段标记为待模板补齐。
 
-## Use The Bundled Scripts
+## 使用内置脚本
 
-- Run `scripts/extract_word_template_format.py <source.doc|docx> <output.json>` to build or repair the template-format JSON.
-- Run `scripts/generate_markdown_papers_docx.py --template-doc <template.doc> --template-json <template.json> --output-dir <dir> <markdown_files...>` to generate `.docx` papers from markdown.
+- 运行 `scripts/extract_word_template_format.py <source.doc|docx> <output.json>` 提取或修复模板格式 JSON。
+- 运行 `scripts/generate_markdown_papers_docx.py --template-doc <template.doc> --template-json <template.json> --output-dir <dir> <markdown_files...>` 根据 Markdown 生成 `.docx`。
 
-Require a Windows environment with Microsoft Word installed and `pywin32` available, because both scripts use Word COM.
+这两个脚本依赖 Windows、Microsoft Word 和 `pywin32`。
 
-## Follow This Pipeline
+## 按这个流程执行
 
-1. Collect or confirm the user's constraints: major, direction, template, title preference, scope, and any required content.
-2. Generate a topic shortlist and explain each option briefly so the user can choose.
-3. After topic confirmation, generate a paper outline with section intent and writing points.
-4. After outline confirmation, write a full markdown draft that matches the generator's markdown contract.
-5. Inspect the source Word template, any existing format JSON, the markdown input, and the downstream output requirements.
-6. Run the extractor and verify page setup, headers, footers, text boxes, semantic blocks, and raw paragraph/run evidence.
-7. Patch extractor heuristics if the JSON misclassifies cover items, TOC items, headings, body text, references, or header/footer scope.
-8. Once the JSON is trustworthy, run the generator with the template, the JSON, and one or more markdown papers.
-9. Validate the generated `.docx` against the template and inspect the output visually in Word when formatting is sensitive.
-10. If generation is wrong, patch the generator assumptions or the JSON contract, then rerun.
+1. 确认用户约束：专业、方向、模板、题目偏好、篇幅和内容要求。
+2. 先生成一个题目候选列表，并简要说明每个题目的角度、难度和可写性。
+3. 用户确认题目后，再生成论文框架。
+4. 用户确认框架后，再扩写完整 Markdown 初稿。
+5. 检查模板、已有 JSON、Markdown 输入和最终输出要求。
+6. 运行模板提取器，核对页面设置、页眉页脚、文本框、语义块和底层段落/字符证据。
+7. 如果 JSON 对封面、目录、标题、正文、参考文献的识别有系统性偏差，先修提取规则再重跑。
+8. 确认 JSON 足够可信后，再运行 Word 生成器。
+9. 校验生成的 `.docx`，并在 Word 中人工检查对格式敏感的部分。
+10. 如果最终 Word 有问题，优先修生成器规则或 JSON 契约，不要做一次性手工补丁。
 
-## Follow These Confirmation Gates
+## 明确确认关口
 
-- Confirm the final topic before writing the outline.
-- Confirm the outline before expanding into full markdown.
-- Confirm the markdown draft before treating it as final input for Word generation.
+- 先确认最终题目，再写框架。
+- 先确认框架，再扩写成完整 Markdown。
+- 先确认 Markdown 初稿，再进入模板识别和最终 Word 生成。
 
-Keep each gate explicit so the user can redirect the paper before the costly formatting stage.
+保持这些关口清晰，避免在高成本排版阶段才发现题目或结构方向错了。
 
-## Apply These Authoring Rules
+## 写作阶段规则
 
-- Generate multiple topic candidates before locking the final title.
-- For each topic, explain the angle, expected difficulty, and whether the material is easy to fill out into a complete paper.
-- Write outlines that are compatible with the markdown contract used by the bundled generator.
-- Expand the outline into a complete markdown draft, not just bullet notes.
-- Keep the draft close to the selected topic and the confirmed outline; do not silently drift into a different direction.
-- If the user supplies only a broad direction, narrow it into concrete, writable topic options before drafting.
-- If the user does not provide a template yet, still produce the markdown draft and clearly mark the Word stage as pending template input.
+- 在锁定题目前，先给出多个题目候选。
+- 每个题目都要说明写作角度、预期难度、是否容易扩写成完整论文。
+- 论文框架必须兼容当前 Markdown 生成器的输入约定。
+- Markdown 初稿必须是完整正文，而不是提纲式要点。
+- 内容扩写时要严格围绕确认后的题目和框架，不要悄悄偏题。
+- 如果用户只给了一个大方向，要先把方向缩小成可写、可成文的具体题目。
+- 如果用户暂时没有模板，仍然可以先完成 Markdown 初稿，并明确说明最终 Word 阶段待模板提供后再执行。
 
-## Apply These Extraction Rules
+## 模板识别规则
 
-- Treat `style_name` as weak evidence. Many legacy templates keep everything under one paragraph style and rely on direct formatting instead.
-- Inspect text boxes and shapes. Cover titles and other fixed layout elements may live outside the main paragraph flow.
-- Distinguish manual TOC from TOC fields. Hand-typed dot leaders and page numbers are plain text, not automatic directory structures.
-- Distinguish fill-in lines from headings. Cover metadata lines often use bold + underline + spaces and are not title levels.
-- Preserve header/footer scope. Check whether the document uses one section, different first page, or odd/even headers.
-- Keep the JSON additive: preserve raw evidence and append higher-level interpretation rather than replacing low-level data.
+- `style_name` 只作为弱证据。很多旧模板整篇都共用一个样式，真正区分结构的是直接格式。
+- 必须检查文本框和形状对象。封面主标题等元素可能根本不在正文段落流里。
+- 要区分手工目录和自动目录。手打点线和页码不是 TOC 域。
+- 要区分封面填写项和真正标题。带下划线和大量空格的封面行通常不是标题层级。
+- 要确认页眉页脚范围。检查是否单节、是否首页不同、是否奇偶页不同。
+- JSON 要尽量增量保留底层证据，在此基础上再追加高层解释，不要为了“好看”删掉原始信息。
 
-## Apply These Generation Rules
+## Word 生成规则
 
-- Use the template JSON as the formatting contract, not the markdown alone.
-- Map markdown content into semantic blocks such as cover title, abstract, keywords, level 1 heading, level 2 heading, body text, conclusion, and references.
-- Preserve special layout behavior from the JSON, including text boxes, manual spacing, tabs, fill lines, and line-spacing rules.
-- Separate visual formatting from Word navigation levels. Do not copy `outline_level` blindly from extracted paragraph evidence into generated paragraphs.
-- Force non-title content such as TOC entries, keywords, body paragraphs, and reference items to body-text outline level so they do not appear as headings in Word navigation.
-- Assign navigation levels only to true semantic titles such as abstract title, preface title, level 1 headings, level 2 headings, conclusion title, and references title.
-- Keep validation in the loop. If the generated `.docx` diverges from the template, fix the extractor or generator instead of applying one-off manual output edits.
+- 生成时以模板 JSON 为排版契约，而不是只看 Markdown 内容。
+- 将 Markdown 映射到明确语义块：封面、摘要、关键词、一级标题、二级标题、正文、结束语、参考文献。
+- 保留模板中的特殊布局行为，例如文本框、手工留白、Tab、下划线占位和固定行距。
+- 必须把“视觉格式”和“Word 导航层级”分开处理，不能直接照搬提取结果中的 `outline_level`。
+- 目录条目、关键词、正文段落、参考文献条目必须强制保持正文级别，不能进入 Word 导航。
+- 只有真正的语义标题，例如摘要标题、前言标题、一级标题、二级标题、结束语标题、参考文献标题，才应该进入导航。
+- 每次生成后都要保留验证环节。如果结果偏了，修规则，不要靠一次性手改文档收尾。
 
-## Read References When Needed
+## 需要时再读这些引用文档
 
-- For the pre-writing flow, required user inputs, and confirmation gates, read [references/authoring-flow.md](references/authoring-flow.md).
-- For the full two-stage workflow and failure modes, read [references/workflow.md](references/workflow.md).
-- For the expected template JSON contract, read [references/json-contract.md](references/json-contract.md).
-- For the current markdown input contract used by the bundled generator, read [references/markdown-contract.md](references/markdown-contract.md).
+- 前置写作流程、用户输入提醒、确认关口： [references/authoring-flow.md](references/authoring-flow.md)
+- 完整流程与常见失败模式： [references/workflow.md](references/workflow.md)
+- 模板 JSON 契约： [references/json-contract.md](references/json-contract.md)
+- Markdown 输入契约： [references/markdown-contract.md](references/markdown-contract.md)
 
-## Update The Skill
+## 维护规则
 
-- Add durable workflow rules and failure patterns to `references/workflow.md`.
-- Add durable intake, topic-selection, outline, and drafting rules to `references/authoring-flow.md`.
-- Add or revise JSON fields in `references/json-contract.md` when the generator starts depending on them.
-- Add or revise markdown parsing assumptions in `references/markdown-contract.md` when the input format changes.
-- Keep `SKILL.md` short. Move detailed case notes or schema expansions into `references/`.
-- If a new fix needs deterministic behavior, patch the bundled scripts and test them before finishing.
+- 新的写作流程经验、题目讨论规则、框架规则，写进 `references/authoring-flow.md`
+- 新的模板识别或生成失败模式，写进 `references/workflow.md`
+- 生成器依赖的 JSON 字段变化，写进 `references/json-contract.md`
+- Markdown 结构约定变化，写进 `references/markdown-contract.md`
+- `SKILL.md` 保持简洁，把长说明沉淀到 `references/`
+- 如果某个修复需要稳定重复执行，就改脚本并测试，而不是只改文档说明

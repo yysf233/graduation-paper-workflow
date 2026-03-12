@@ -1,4 +1,4 @@
 interface:
-  display_name: "Graduation Paper Workflow"
-  short_description: "Topic, outline, markdown draft, and Word output"
-  default_prompt: "Use $graduation-paper-workflow to discuss a paper topic, build the outline, draft the markdown, extract the template JSON, and generate the final Word document."
+  display_name: "毕业论文工作流"
+  short_description: "选题、框架、Markdown 初稿与 Word 生成"
+  default_prompt: "使用 $graduation-paper-workflow 讨论论文题目，整理框架，扩写 Markdown 初稿，提取模板 JSON，并生成最终 Word 文档。"
