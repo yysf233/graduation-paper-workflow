@@ -1,0 +1,4 @@
+interface:
+  display_name: "Graduation Paper Workflow"
+  short_description: "Topic, outline, markdown draft, and Word output"
+  default_prompt: "Use $graduation-paper-workflow to discuss a paper topic, build the outline, draft the markdown, extract the template JSON, and generate the final Word document."
